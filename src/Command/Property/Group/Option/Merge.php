@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WebwirkungPropertyMerger\Command\Property\Group\Option;
 
-use Enqueue\Util\UUID as UtilUUID;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use WebwirkungPropertyMerger\Service\Property\Group;
 use WebwirkungPropertyMerger\Service\Property\Option;
 use Shopware\Core\Framework\Uuid\Uuid;
+use WebwirkungPropertyMerger\Service\Product\Product;
 
 class Merge extends Command
 {
@@ -19,10 +19,13 @@ class Merge extends Command
 
   private Option $propertyGroupOptionService;
 
-  public function __construct(Group $propertyGroupService, Option $propertyGroupOptionService) {
+  private Product $productService;
+
+  public function __construct(Group $propertyGroupService, Option $propertyGroupOptionService, Product $productService) {
       parent::__construct();
       $this->propertyGroupService = $propertyGroupService;
       $this->propertyGroupOptionService = $propertyGroupOptionService;
+      $this->productService = $productService;
   }
 
   protected static $defaultName = 'webwirkung:property-merge';
@@ -63,14 +66,28 @@ class Merge extends Command
       return Command::SUCCESS;
     }
 
-    $preparedPackage = $this->propertyGroupService->prepareToMerge($propertyGroups[$source], $propertyGroups[$destination]);
+    $sourceGroupOptions = $propertyGroups[$source]->getOptions()->getElements();
+    $destinationGroupOptions = $propertyGroups[$destination]->getOptions()->getElements();
 
-    foreach ($preparedPackage as $item) {
-      // $this->propertyGroupOptionService->update($destination, $item);
+    foreach ($sourceGroupOptions as $option) {
+      $isInDestination = array_filter($destinationGroupOptions, fn($item) => $item->getName() === $option->getName());
+
+      if (! empty($isInDestination)) {
+        $products = $this->productService->findByGroupOption($option->getId());
+        foreach ($products as $product) {
+          $changedPropertyIds = array_map(fn($item) => $item === $option->getId() ? ['id' => reset($isInDestination)->getId()] : ['id' => $item], $product->getPropertyIds());
+          $this->productService->updateProperty($product->getId(), $option->getId(), array_unique($changedPropertyIds, SORT_REGULAR));
+        }
+        $this->propertyGroupOptionService->delete($option->getId());
+        continue;
+      }
+
+      $this->propertyGroupOptionService->update($destination, $option->getId());
     }
 
-    // $this->propertyGroupService->delete($source);
+    $this->propertyGroupService->delete($source);
 
+    $output->writeln('<info>Finished!</info>');
     return Command::SUCCESS;
   }
 }

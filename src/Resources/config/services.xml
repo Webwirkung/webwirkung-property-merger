@@ -27,6 +27,7 @@
         <service id="WebwirkungPropertyMerger\Command\Property\Group\Option\Merge">
             <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Group"/>
             <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Option"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Product\Product"/>
             <tag name="console.command"/>
         </service>
     </services>
