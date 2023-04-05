@@ -7,14 +7,26 @@
     <services>
          <service id="WebwirkungPropertyMerger\Service\Property\Group">
             <argument type="service" id="property_group.repository"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Option"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Product\Product"/>
+        </service>
+        <service id="WebwirkungPropertyMerger\Service\Property\Option">
+            <argument type="service" id="property_group_option.repository"/>
+        </service>
+         <service id="WebwirkungPropertyMerger\Service\Product\Product">
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Product"/>
+        </service>
+        <service id="WebwirkungPropertyMerger\Service\Property\Product">
+            <argument type="service" id="product_property.repository"/>
         </service>
         <service id="WebwirkungPropertyMerger\Command\Property\Group\Show">
             <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Group"/>
             <tag name="console.command"/>
         </service>
         <service id="WebwirkungPropertyMerger\Command\Property\Group\Option\Merge">
-            <argument type="service" id="property_group.repository"/>
-            <argument type="service" id="property_group_option.repository"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Group"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Option"/>
             <tag name="console.command"/>
         </service>
     </services>

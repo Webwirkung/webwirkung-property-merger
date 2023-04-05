@@ -12,14 +12,14 @@ use Symfony\Component\Console\Helper\Table;
 
 class Show extends Command
 {
-  private Group $propertyGroup;
+  private Group $propertyGroupService;
 
   protected static $defaultName = 'webwirkung:property-list';
 
-  public function __construct(Group $propertyGroup)
+  public function __construct(Group $propertyGroupService)
   {
       parent::__construct();
-      $this->propertyGroup = $propertyGroup;
+      $this->propertyGroupService = $propertyGroupService;
   }
 
   protected function configure(): void
@@ -30,7 +30,7 @@ class Show extends Command
   protected function execute(InputInterface $input, OutputInterface $output): int
   {
 
-    $propertyGroups = $this->propertyGroup->getAll();
+    $propertyGroups = $this->propertyGroupService->getAll();
 
     if (count($propertyGroups) > 0) {
       $table = new Table($output);

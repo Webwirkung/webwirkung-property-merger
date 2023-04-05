@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace WebwirkungPropertyMerger\Command\Property\Group\Option;
 
+use Enqueue\Util\UUID as UtilUUID;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use WebwirkungPropertyMerger\Service\Property\Group;
+use WebwirkungPropertyMerger\Service\Property\Option;
+use Shopware\Core\Framework\Uuid\Uuid;
 
 class Merge extends Command
 {
-  private $propertyGroup;
-  private $propertyGroupOption;
+  private Group $propertyGroupService;
 
-  public function __construct(EntityRepositoryInterface $propertyGroup, EntityRepositoryInterface $propertyGroupOption) {
+  private Option $propertyGroupOptionService;
+
+  public function __construct(Group $propertyGroupService, Option $propertyGroupOptionService) {
       parent::__construct();
-      $this->propertyGroup = $propertyGroup;
-      $this->propertyGroupOption = $propertyGroupOption;
+      $this->propertyGroupService = $propertyGroupService;
+      $this->propertyGroupOptionService = $propertyGroupOptionService;
   }
 
   protected static $defaultName = 'webwirkung:property-merge';
@@ -28,34 +30,47 @@ class Merge extends Command
   protected function configure(): void
   {
       $this
-            ->addArgument('o', InputArgument::REQUIRED, 'origin/source - Which options do you merge?')
-            ->addArgument('d', InputArgument::REQUIRED, 'Destination of the merge action')
+            ->addArgument('source', InputArgument::REQUIRED, 'origin/source - Which options do you merge?')
+            ->addArgument('destination', InputArgument::REQUIRED, 'Destination of the merge action')
             ->setDescription('Merge your properties fields easily.')
         ;
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int
   {
-    var_dump($input->getArgument('o'));
-    var_dump($input->getArgument('d'));
+    $source = $input->getArgument('source');
+    $destination = $input->getArgument('destination');
 
-    // $criteria = (new Criteria())->addAssociation('options.group');
-    // $propertyGroup = $this->propertyGroup->search($criteria, Context::createDefaultContext());
-    // $propertyGroupEntities = $propertyGroup->getElements();
+    if (! UUID::isValid($source)) {
+      $output->writeln('<error> The source ID is not valid. </error>');
+      return Command::FAILURE;
+    }
 
-    // foreach ($propertyGroupEntities as $entity) {
-    //   $duplicate = array_filter($propertyGroupEntities, fn($item) => $entity->getName() === $item->getName());
-    //   foreach ($duplicate as $d) {
-    //     if ($d->getId() !== $entity->getId()) {
-    //       $changed = array_map(fn($item) => $item->setGroupId($d->getId()), $d->getOptions());
-    //       var_dump($changed);
-    //       die;
-    //     }
-    //   }
+    if (! UUID::isValid($destination)) {
+      $output->writeln('<error> The destination ID is not valid. </error>');
+      return Command::FAILURE;
+    }
 
-    // }
+    $propertyGroups = $this->propertyGroupService->getByIds([$source, $destination]);
 
+    if (0 === count($propertyGroups)) {
+      $output->writeln('<bg=yellow> You don\'t have defined property groups. </>');
+      return Command::SUCCESS;
+    }
 
-    return 0;
+    if (1 === count($propertyGroups)) {
+      $output->writeln(sprintf('<bg=yellow> The %s group not found. </>', (array_key_exists($source, $propertyGroups) ? 'destination' : 'source')));
+      return Command::SUCCESS;
+    }
+
+    $preparedPackage = $this->propertyGroupService->prepareToMerge($propertyGroups[$source], $propertyGroups[$destination]);
+
+    foreach ($preparedPackage as $item) {
+      // $this->propertyGroupOptionService->update($destination, $item);
+    }
+
+    // $this->propertyGroupService->delete($source);
+
+    return Command::SUCCESS;
   }
 }
