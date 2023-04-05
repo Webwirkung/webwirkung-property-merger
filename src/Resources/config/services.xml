@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+         <service id="WebwirkungPropertyMerger\Service\Property\Group">
+            <argument type="service" id="property_group.repository"/>
+        </service>
+        <service id="WebwirkungPropertyMerger\Command\Property\Group\Show">
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Group"/>
+            <tag name="console.command"/>
+        </service>
+        <service id="WebwirkungPropertyMerger\Command\Property\Group\Option\Merge">
+            <argument type="service" id="property_group.repository"/>
+            <argument type="service" id="property_group_option.repository"/>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>
