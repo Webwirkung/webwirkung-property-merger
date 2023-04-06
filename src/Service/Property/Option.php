@@ -24,17 +24,17 @@ class Option
     return $this->context;
   }
 
-  public function update(string $id, string $item)
+  public function update(string $groupId, string $optionId): void
   {
     $this->groupOptionRepository->update([
       [
-          'id' => $item,
-          'groupId' => $id,
+          'id' => $optionId,
+          'groupId' => $groupId,
       ]
     ], $this->getContext());
   }
 
-  public function delete(string $id)
+  public function delete(string $id): void
   {
     $this->groupOptionRepository->delete([
       [

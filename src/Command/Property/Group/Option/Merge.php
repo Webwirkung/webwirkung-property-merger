@@ -7,11 +7,12 @@ namespace WebwirkungPropertyMerger\Command\Property\Group\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use WebwirkungPropertyMerger\Service\Property\Group;
 use WebwirkungPropertyMerger\Service\Property\Option;
 use Shopware\Core\Framework\Uuid\Uuid;
 use WebwirkungPropertyMerger\Service\Product\Product;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputOption;
 
 class Merge extends Command
 {
@@ -33,16 +34,18 @@ class Merge extends Command
   protected function configure(): void
   {
       $this
-            ->addArgument('source', InputArgument::REQUIRED, 'origin/source - Which options do you merge?')
-            ->addArgument('destination', InputArgument::REQUIRED, 'Destination of the merge action')
+            ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'origin/source - Which options do you merge?')
+            ->addOption('destination', 'd', InputOption::VALUE_REQUIRED, 'Destination of the merge action')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run without modifying the database.')
             ->setDescription('Merge your properties fields easily.')
         ;
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int
   {
-    $source = $input->getArgument('source');
-    $destination = $input->getArgument('destination');
+    $source = $input->getOption('source');
+    $destination = $input->getOption('destination');
+    $dryRun = $input->getOption('dry-run');
 
     if (! UUID::isValid($source)) {
       $output->writeln('<error> The source ID is not valid. </error>');
@@ -69,25 +72,40 @@ class Merge extends Command
     $sourceGroupOptions = $propertyGroups[$source]->getOptions()->getElements();
     $destinationGroupOptions = $propertyGroups[$destination]->getOptions()->getElements();
 
+    $table = new Table($output);
+    $table->setHeaders(['Property ID', 'Property name', 'Action']);
+
+    $x = 0;
     foreach ($sourceGroupOptions as $option) {
       $isInDestination = array_filter($destinationGroupOptions, fn($item) => $item->getName() === $option->getName());
 
       if (! empty($isInDestination)) {
         $products = $this->productService->findByGroupOption($option->getId());
-        foreach ($products as $product) {
-          $changedPropertyIds = array_map(fn($item) => $item === $option->getId() ? ['id' => reset($isInDestination)->getId()] : ['id' => $item], $product->getPropertyIds());
-          $this->productService->updateProperty($product->getId(), $option->getId(), array_unique($changedPropertyIds, SORT_REGULAR));
+
+        if (! $dryRun) {
+          foreach ($products as $product) {
+            $changedPropertyIds = array_map(fn($item) => $item === $option->getId() ? ['id' => reset($isInDestination)->getId()] : ['id' => $item], $product->getPropertyIds());
+            $this->productService->updateProperty($product->getId(), $option->getId(), array_unique($changedPropertyIds, SORT_REGULAR));
+          }
+          $this->propertyGroupOptionService->delete($option->getId());
         }
-        $this->propertyGroupOptionService->delete($option->getId());
+
+        $table->setRow($x++, [$option->getId(), $option->getName(), 'Overriden']);
         continue;
       }
 
-      $this->propertyGroupOptionService->update($destination, $option->getId());
+      if (! $dryRun) {
+        $this->propertyGroupOptionService->update($destination, $option->getId());
+      }
+      $table->setRow($x++, [$option->getId(), $option->getName(), 'Merged']);
     }
 
-    $this->propertyGroupService->delete($source);
+    if (! $dryRun) {
+      $this->propertyGroupService->delete($source);
+    }
 
-    $output->writeln('<info>Finished!</info>');
+    $table->render();
+
     return Command::SUCCESS;
   }
 }

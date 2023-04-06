@@ -24,11 +24,11 @@ class Product
     return $this->context;
   }
 
-  public function delete(string $id, string $optionId): void
+  public function delete(string $productId, string $optionId): void
   {
     $this->productPropertyRepository->delete([
       [
-        'productId' => $id,
+        'productId' => $productId,
         'optionId' => $optionId,
       ]
     ], $this->getContext());

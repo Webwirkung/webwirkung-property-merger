@@ -40,7 +40,7 @@ class Group
         ->getElements();
   }
 
-  public function delete(string $id)
+  public function delete(string $id): void
   {
     $this->groupRepository->delete([
       [

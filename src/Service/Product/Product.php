@@ -9,6 +9,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\ContainsFilter;
 use WebwirkungPropertyMerger\Service\Property\Product as PropertyProduct;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 
 class Product
 {
@@ -30,7 +31,7 @@ class Product
     return $this->context;
   }
 
-  public function findByGroupOption(string $id)
+  public function findByGroupOption(string $id): EntitySearchResult
   {
     $criteria = new Criteria();
     $criteria->addFilter(
@@ -40,14 +41,14 @@ class Product
     return $this->productRepository->search($criteria, $this->getContext());
   }
 
-  public function updateProperty(string $id, string $sourceId, array $data)
+  public function updateProperty(string $id, string $sourceId, array $properties): void
   {
     $this->productPropertyService->delete($id, $sourceId);
 
     $this->productRepository->update([
       [
           'id' => $id,
-          'properties' => $data,
+          'properties' => $properties,
       ]
     ], $this->getContext());
   }

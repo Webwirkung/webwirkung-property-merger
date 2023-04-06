@@ -34,18 +34,18 @@ class Show extends Command
 
     if (count($propertyGroups) > 0) {
       $table = new Table($output);
-      $table->setHeaders(['Group ID', 'Group name', 'Count of options']);
+      $table->setHeaders(['Group ID', 'Group name', 'Number of options']);
 
       $x = 0;
-      foreach ($propertyGroups as $key => $group) {
-        $table->setRow($x, [$group->getId(), $group->getName(), count($group->getOptions())]);
-        $x++;
+      foreach ($propertyGroups as $group) {
+        $table->setRow($x++, [$group->getId(), $group->getName(), count($group->getOptions())]);
       }
+
       $table->render();
     } else {
       $output->writeln('You don\'t have defined property groups.');
     }
 
-    return 0;
+    return Command::SUCCESS;
   }
 }
