@@ -7,6 +7,7 @@ namespace WebwirkungPropertyMerger\Service\Property;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 
 class Group
 {
@@ -33,7 +34,8 @@ class Group
   public function getByIds(array $ids = []): array
   {
     $criteria = (new Criteria($ids))
-                    ->addAssociation('options.group');
+                    ->addAssociation('options.group')
+                    ->addSorting(new FieldSorting('name', FieldSorting::ASCENDING));
 
     return $this->groupRepository
         ->search($criteria, $this->getContext())

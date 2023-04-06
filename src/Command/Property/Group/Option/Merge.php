@@ -47,12 +47,12 @@ class Merge extends Command
     $destination = $input->getOption('destination');
     $dryRun = $input->getOption('dry-run');
 
-    if (! UUID::isValid($source)) {
+    if (! $source || ! UUID::isValid($source)) {
       $output->writeln('<error> The source ID is not valid. </error>');
       return Command::FAILURE;
     }
 
-    if (! UUID::isValid($destination)) {
+    if (! $destination || ! UUID::isValid($destination)) {
       $output->writeln('<error> The destination ID is not valid. </error>');
       return Command::FAILURE;
     }
