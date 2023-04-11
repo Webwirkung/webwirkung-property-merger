@@ -77,16 +77,31 @@ class Merge extends Command
 
     $x = 0;
     foreach ($sourceGroupOptions as $option) {
-      $isInDestination = array_filter($destinationGroupOptions, fn($item) => $item->getName() === $option->getName());
+      $inDestination = array_filter($destinationGroupOptions, fn($item) => $item->getName() === $option->getName());
 
-      if (! empty($isInDestination)) {
-        $products = $this->productService->findByGroupOption($option->getId());
-
+      if (! empty($inDestination)) {
         if (! $dryRun) {
+          $products = $this->productService->findByGroupOption($option->getId());
+          $inDestination = reset($inDestination);
+
           foreach ($products as $product) {
-            $changedPropertyIds = array_map(fn($item) => $item === $option->getId() ? ['id' => reset($isInDestination)->getId()] : ['id' => $item], $product->getPropertyIds());
+            $changedPropertyIds = array_map(fn($item) => $item === $option->getId() ? ['id' => $inDestination->getId()] : ['id' => $item], $product->getPropertyIds());
             $this->productService->updateProperty($product->getId(), $option->getId(), array_unique($changedPropertyIds, SORT_REGULAR));
           }
+
+          $productWithOptions = $this->productService->findOptions($option->getId());
+
+          foreach ($productWithOptions as $productOption) {
+            $this->productService->updateOptions($productOption->getId(), $option->getId(), $inDestination);
+          }
+
+          $productConfigurations = $this->productService->findConfiguration($option->getId());
+
+          foreach ($productConfigurations as $productConfiguration) {
+            $configration = array_filter($productConfiguration->getConfiguratorSettings()->getElements(), fn($item) => $item->getOptionId() === $option->getId());
+            $this->productService->updateConfigurator($productConfiguration->getId(), $inDestination, reset($configration));
+          }
+
           $this->propertyGroupOptionService->delete($option->getId());
         }
 

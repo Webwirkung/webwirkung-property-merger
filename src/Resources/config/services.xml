@@ -13,9 +13,17 @@
         <service id="WebwirkungPropertyMerger\Service\Property\Option">
             <argument type="service" id="property_group_option.repository"/>
         </service>
+        <service id="WebwirkungPropertyMerger\Service\Product\Option">
+            <argument type="service" id="product_option.repository"/>
+        </service>
+        <service id="WebwirkungPropertyMerger\Service\Product\Configurator">
+            <argument type="service" id="product_configurator_setting.repository"/>
+        </service>
          <service id="WebwirkungPropertyMerger\Service\Product\Product">
             <argument type="service" id="product.repository"/>
             <argument type="service" id="WebwirkungPropertyMerger\Service\Property\Product"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Product\Option"/>
+            <argument type="service" id="WebwirkungPropertyMerger\Service\Product\Configurator"/>
         </service>
         <service id="WebwirkungPropertyMerger\Service\Property\Product">
             <argument type="service" id="product_property.repository"/>
