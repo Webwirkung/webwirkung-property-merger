@@ -1,0 +1,28 @@
+{
+  "name": "webwirkung/property-merger",
+  "description": "WebwirkungPropertyMerger",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Webwirkung GmbH"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "WebwirkungPropertyMerger\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "WebwirkungPropertyMerger\\WebwirkungPropertyMerger",
+    "label": {
+      "de-DE": "Webwirkung property merger",
+      "en-GB": "Webwirkung property merger"
+    },
+    "description": {
+      "de-DE": "Führen Sie Ihre Eigenschaftsfelder einfach zusammen.",
+      "en-GB": "Merge your properties fields easily."
+    }
+  }
+}
