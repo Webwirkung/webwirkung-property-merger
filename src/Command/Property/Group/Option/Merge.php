@@ -77,7 +77,7 @@ class Merge extends Command
 
     $x = 0;
     foreach ($sourceGroupOptions as $option) {
-      $inDestination = array_filter($destinationGroupOptions, fn($item) => $item->getName() === $option->getName());
+      $inDestination = array_filter($destinationGroupOptions, fn($item) => trim($item->getName()) === trim($option->getName()));
 
       if (! empty($inDestination)) {
         if (! $dryRun) {
