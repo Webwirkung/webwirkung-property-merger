@@ -33,9 +33,9 @@ class Group
 
   public function getByIds(array $ids = []): array
   {
-    $criteria = (new Criteria($ids))
-                    ->addAssociation('options.group')
-                    ->addSorting(new FieldSorting('name', FieldSorting::ASCENDING));
+    $criteria = (!empty($ids) ? (new Criteria($ids)) : new Criteria())
+      ->addAssociation('options.group')
+      ->addSorting(new FieldSorting('name', FieldSorting::ASCENDING));
 
     return $this->groupRepository
         ->search($criteria, $this->getContext())
