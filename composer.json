@@ -20,6 +20,9 @@
       "de-DE": "Webwirkung property merger",
       "en-GB": "Webwirkung property merger"
     },
+    "require": {
+      "shopware/core": "^v6.5"
+    },
     "description": {
       "de-DE": "Führen Sie Ihre Eigenschaftsfelder einfach zusammen.",
       "en-GB": "Merge your properties fields easily."
