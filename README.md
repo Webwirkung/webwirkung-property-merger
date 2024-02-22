@@ -4,8 +4,25 @@ With this plugin, you can merge duplicate property groups in Shopware 6.
 ## Blog post
 Please find more details in our [blog post](https://webwirkung.ch/blog/duplikate-von-eigenschaften-in-shopware-6-zusammenfuehren/).
 
-## Installation
-Download the ZIP file of this repository and install it via the Shopware 6 administration or use composer.
+## Installalation
+Add access rights for this repository to the github token of your client.  
+Add this repository to your composer.json file:
+
+```
+"repositories": {
+   ...
+   
+    "webwirkung-property-merger": {
+        "type": "vcs",
+        "url":  "git@github.com:Webwirkung/webwirkung-property-merger.git"
+    }
+},
+```
+
+Require the plugin via composer:
+```
+composer req webwirkung/property-merger
+```
 
 ## Usage of the plugin
 The plugin adds a new command to the shopware console. You can execute it with the following command:
