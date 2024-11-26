@@ -18,7 +18,12 @@ use Symfony\Component\Console\Input\InputOption;
 #[AsCommand(name: 'webwirkung:property-merge', description: 'Merge your properties fields easily.')]
 class Merge extends Command
 {
-  public function __construct(private readonly Group $propertyGroupService, private readonly Option $propertyGroupOptionService, private readonly Product $productService) {
+  public function __construct(
+      private readonly Group $propertyGroupService,
+      private readonly Option $propertyGroupOptionService,
+      private readonly Product $productService
+  )
+  {
       parent::__construct();
   }
 
@@ -55,7 +60,10 @@ class Merge extends Command
     }
 
     if (1 === count($propertyGroups)) {
-      $output->writeln(sprintf('<bg=yellow> The %s group not found. </>', (array_key_exists($source, $propertyGroups) ? 'destination' : 'source')));
+      $output->writeln(sprintf(
+          '<bg=yellow> The %s group not found. </>',
+          (array_key_exists($source, $propertyGroups) ? 'destination' : 'source')
+      ));
       return Command::SUCCESS;
     }
 

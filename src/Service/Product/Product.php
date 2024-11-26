@@ -19,7 +19,12 @@ class Product
 {
   private readonly Context $context;
 
-  public function __construct(private readonly EntityRepository $productRepository, private readonly PropertyProduct $productPropertyService, private readonly Option $productOptionService, private readonly Configurator $productConfiguratiorService)
+  public function __construct(
+      private readonly EntityRepository $productRepository,
+      private readonly PropertyProduct $productPropertyService,
+      private readonly Option $productOptionService,
+      private readonly Configurator $productConfiguratiorService
+  )
   {
     $this->context = Context::createDefaultContext();
   }
