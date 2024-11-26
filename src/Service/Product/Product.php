@@ -17,23 +17,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\MultiFilter;
 
 class Product
 {
-  private Context $context;
+  private readonly Context $context;
 
-  private EntityRepository $productRepository;
-
-  private PropertyProduct $productPropertyService;
-
-  private Option $productOptionService;
-
-  private Configurator $productConfiguratiorService;
-
-  public function __construct(EntityRepository $productRepository, PropertyProduct $productPropertyService, Option $productOptionService, Configurator $productConfiguratiorService)
+  public function __construct(private readonly EntityRepository $productRepository, private readonly PropertyProduct $productPropertyService, private readonly Option $productOptionService, private readonly Configurator $productConfiguratiorService)
   {
     $this->context = Context::createDefaultContext();
-    $this->productRepository = $productRepository;
-    $this->productPropertyService = $productPropertyService;
-    $this->productOptionService = $productOptionService;
-    $this->productConfiguratiorService = $productConfiguratiorService;
   }
 
   public function getContext(): Context

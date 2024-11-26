@@ -11,14 +11,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 
 class Group
 {
-  private Context $context;
+  private readonly Context $context;
 
-  private EntityRepository $groupRepository;
-
-  public function __construct(EntityRepository $groupRepository)
+  public function __construct(private readonly EntityRepository $groupRepository)
   {
     $this->context = Context::createDefaultContext();
-    $this->groupRepository = $groupRepository;
   }
 
   public function getContext(): Context

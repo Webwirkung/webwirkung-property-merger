@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebwirkungPropertyMerger\Command\Property\Group\Option;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,22 +15,12 @@ use WebwirkungPropertyMerger\Service\Product\Product;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputOption;
 
+#[AsCommand(name: 'webwirkung:property-merge', description: 'Merge your properties fields easily.')]
 class Merge extends Command
 {
-  private Group $propertyGroupService;
-
-  private Option $propertyGroupOptionService;
-
-  private Product $productService;
-
-  public function __construct(Group $propertyGroupService, Option $propertyGroupOptionService, Product $productService) {
+  public function __construct(private readonly Group $propertyGroupService, private readonly Option $propertyGroupOptionService, private readonly Product $productService) {
       parent::__construct();
-      $this->propertyGroupService = $propertyGroupService;
-      $this->propertyGroupOptionService = $propertyGroupOptionService;
-      $this->productService = $productService;
   }
-
-  protected static $defaultName = 'webwirkung:property-merge';
 
   protected function configure(): void
   {
@@ -37,7 +28,6 @@ class Merge extends Command
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'origin/source - Which options do you merge?')
             ->addOption('destination', 'd', InputOption::VALUE_REQUIRED, 'Destination of the merge action')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run without modifying the database.')
-            ->setDescription('Merge your properties fields easily.')
         ;
   }
 
@@ -77,7 +67,7 @@ class Merge extends Command
 
     $x = 0;
     foreach ($sourceGroupOptions as $option) {
-      $inDestination = array_filter($destinationGroupOptions, fn($item) => trim($item->getName()) === trim($option->getName()));
+      $inDestination = array_filter($destinationGroupOptions, fn($item) => trim((string) $item->getName()) === trim((string) $option->getName()));
 
       if (! empty($inDestination)) {
         if (! $dryRun) {

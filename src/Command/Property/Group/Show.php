@@ -4,27 +4,23 @@ declare(strict_types=1);
 
 namespace WebwirkungPropertyMerger\Command\Property\Group;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use WebwirkungPropertyMerger\Service\Property\Group;
 use Symfony\Component\Console\Helper\Table;
 
+#[AsCommand(name: 'webwirkung:property-list', description: 'Show all properties groups with ids.')]
 class Show extends Command
 {
-  private Group $propertyGroupService;
-
-  protected static $defaultName = 'webwirkung:property-list';
-
-  public function __construct(Group $propertyGroupService)
+  public function __construct(private readonly Group $propertyGroupService)
   {
       parent::__construct();
-      $this->propertyGroupService = $propertyGroupService;
   }
 
   protected function configure(): void
   {
-      $this ->setDescription('Show all properties groups with ids.');
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int
