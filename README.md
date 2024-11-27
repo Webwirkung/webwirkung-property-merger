@@ -45,3 +45,7 @@ There is a dry run mode available, which does not execute the merge, but shows y
 
 ## Support
 Please note that we do not offer free support for the plugin.
+
+## Branches
+main-1.0 => Shopware 6.5
+main => Shopware 6.6

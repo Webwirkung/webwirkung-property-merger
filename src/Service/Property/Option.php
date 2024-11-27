@@ -9,14 +9,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 
 class Option
 {
-  private Context $context;
+  private readonly Context $context;
 
-  private EntityRepository $groupOptionRepository;
-
-  public function __construct(EntityRepository $groupOptionRepository)
+  public function __construct(private readonly EntityRepository $groupOptionRepository)
   {
     $this->context = Context::createDefaultContext();
-    $this->groupOptionRepository = $groupOptionRepository;
   }
 
   public function getContext(): Context

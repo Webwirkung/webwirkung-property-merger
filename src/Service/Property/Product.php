@@ -9,14 +9,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 
 class Product
 {
-  private Context $context;
+  private readonly Context $context;
 
-  private EntityRepository $productPropertyRepository;
-
-  public function __construct(EntityRepository $productPropertyRepository)
+  public function __construct(private readonly EntityRepository $productPropertyRepository)
   {
     $this->context = Context::createDefaultContext();
-    $this->productPropertyRepository = $productPropertyRepository;
   }
 
   public function getContext(): Context

@@ -3,7 +3,7 @@
   "description": "WebwirkungPropertyMerger",
   "type": "shopware-platform-plugin",
   "license": "proprietary",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "authors": [
     {
       "name": "Webwirkung GmbH"
@@ -21,7 +21,7 @@
       "en-GB": "Webwirkung property merger"
     },
     "require": {
-      "shopware/core": "^v6.5"
+      "shopware/core": "^v6.6"
     },
     "description": {
       "de-DE": "Führen Sie Ihre Eigenschaftsfelder einfach zusammen.",

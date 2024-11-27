@@ -9,14 +9,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 
 class Configurator
 {
-  private Context $context;
+  private readonly Context $context;
 
-  private EntityRepository $productConfigurationRepository;
-
-  public function __construct(EntityRepository $productConfigurationRepository)
+  public function __construct(private readonly EntityRepository $productConfigurationRepository)
   {
     $this->context = Context::createDefaultContext();
-    $this->productConfigurationRepository = $productConfigurationRepository;
   }
 
   public function getContext(): Context
